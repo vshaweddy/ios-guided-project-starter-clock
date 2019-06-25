@@ -1,4 +1,4 @@
-# Clock - View Animations II
+# Clock
 
 This is a guided project starter for the module _Animation II - Advanced Drawing_ in the sprint _iOS User Interface_.
 
