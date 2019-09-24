@@ -19,7 +19,7 @@ struct Hand {
     var value: Int = 0
 }
 
-@IBDesignable
+@IBDesignable // rendering the view in the storyboard
 class ClockView: UIView {
     
     // MARK: - Properties
@@ -158,7 +158,6 @@ class ClockView: UIView {
             context.strokePath()
             
             // hour/minute's center
-            
             // Add an ellipse to the center of the clock vie
             // Make it 12 points in diameter (6 points radius)
             
@@ -175,25 +174,53 @@ class ClockView: UIView {
             context.fillPath()
             
             // second hand
+            context.move(to: clockCenter)
+            context.addLine(to: secondHandEndPoint)
+            
+            context.setStrokeColor(seconds.color.cgColor)
+            context.setLineWidth(seconds.width)
+            
+            context.strokePath()
             
             // second's center
+            let secondRadius: CGFloat = 3
+            let secondCircleRect = CGRect(x: clockCenter.x - secondRadius,
+                                          y: clockCenter.y - secondRadius,
+                                          width: secondRadius * 2,
+                                          height: secondRadius * 2)
+            
+            context.move(to: clockCenter)
+            context.addEllipse(in: secondCircleRect)
+            
+            context.setFillColor(seconds.color.cgColor)
+            context.fillPath()
             
         }
     }
     
     @objc func timerFired(_ sender: CADisplayLink) {
         // Get current time
+        let currentTime = Date()
         
         // Get calendar and set timezone
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timezone!
         
         // Extract hour, minute, second components from current time
+        let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: currentTime)
         
         // Set above components to hours, minutes, seconds properties
         
-        // Trigger a screen refresh
+        // These are the value that the draw methos id looking for to draw the clock view from
+        hours.value = timeComponents.hour ?? 0
+        minutes.value = timeComponents.minute ?? 0
+        seconds.value = timeComponents.second ?? 0
         
+        // Trigger a screen refresh
+        setNeedsDisplay()
     }
     
+    // tear down
     deinit {
         // Animation timer is removed from the current run loop when this view object
         // is deallocated.
